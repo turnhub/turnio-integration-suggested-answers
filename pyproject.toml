@@ -6,7 +6,7 @@ authors = ["Simonde9 <<>>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-flask = "^1.1.2"
+flask = "^2.2.5"
 phonenumbers = "^8.12.22"
 
 [tool.poetry.dev-dependencies]
