@@ -2,7 +2,8 @@ from flask import Flask, request
 import openai
 import os
 from environs import Env
-from pprint import pprint
+import logger
+import json
 
 env = Env()
 env.read_env()
@@ -15,6 +16,9 @@ openai.api_key = env.str("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
+
+def my_print(the_string):
+  print(json.dumps({"payload": the_string}))
 
 @app.route('/')
 def hello_world():
@@ -63,8 +67,6 @@ def transform_messages(messages):
 
 
 def get_suggested_responses(messages):
-  print("get_suggested_responses")
-  print(f"openai.api_key: {openai.api_key}")
   if messages == []:
     return []
 
@@ -73,23 +75,34 @@ def get_suggested_responses(messages):
     "role": "system",
     "content": SYSTEM_PROMPT
   }] + messages_to_respond_to
-  
-  pprint(messages_final)
 
-  response = openai.ChatCompletion.create(
-    model=MODEL,
-    messages=messages_final,
-    temperature=0,
-  )
+  my_print(messages_final)
 
-  formatted_replies = [{
-    "type": "TEXT",
-    "body": choice["message"]["content"],
-    "title": f"ChatGPT Reply {choice['index']}",
-    "confidence": 1,
-  } for choice in response["choices"]]
+  try:
+    response = openai.ChatCompletion.create(
+      model=MODEL,
+      messages=messages_final,
+      temperature=0,
+      request_timeout=7
+    )
 
-  return formatted_replies
+    formatted_replies = [{
+      "type": "TEXT",
+      "body": choice["message"]["content"],
+      "title": f"ChatGPT Reply {choice['index']}",
+      "confidence": 1,
+    } for choice in response["choices"]]
+
+    my_print(formatted_replies)
+
+    return formatted_replies
+  except openai.error.Timeout as e:
+    return [{
+      "type": "TEXT",
+      "body": "Request to ChatGPT has timed out. Please try again later.",
+      "title": "ChatGPT Error Reply",
+      "confidence": 1
+    }]
 
 
 if __name__ == "__main__":
