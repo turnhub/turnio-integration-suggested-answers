@@ -10,6 +10,7 @@ env.read_env()
 SYSTEM_PROMPT = env.str("SYSTEM_PROMPT", "You are a helpful assistant who provides informative answers about healthy living.")
 MODEL = env.str("MODEL", "gpt-3.5-turbo")
 NUMBER_OF_MESSAGES_FOR_CONTEXT = env.int("NUMBER_OF_MESSAGES_FOR_CONTEXT", 4)
+CHATGPT_TIMEOUT = env.int("CHATGPT_TIMEOUT", 10)
 
 openai.api_key = env.str("OPENAI_API_KEY")
 
@@ -82,7 +83,7 @@ def get_suggested_responses(messages):
       model=MODEL,
       messages=messages_final,
       temperature=0,
-      request_timeout=7
+      request_timeout=CHATGPT_TIMEOUT
     )
 
     formatted_replies = [{
