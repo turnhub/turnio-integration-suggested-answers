@@ -2,7 +2,6 @@ from flask import Flask, request
 import openai
 import os
 from environs import Env
-import logger
 import json
 
 env = Env()
@@ -97,12 +96,16 @@ def get_suggested_responses(messages):
 
     return formatted_replies
   except openai.error.Timeout as e:
-    return [{
+    formatted_reply = [{
       "type": "TEXT",
       "body": "Request to ChatGPT has timed out. Please try again later.",
       "title": "ChatGPT Error Reply",
       "confidence": 1
     }]
+
+    my_print(formatted_reply)
+
+    return formatted_reply
 
 
 if __name__ == "__main__":
