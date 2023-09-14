@@ -9,7 +9,7 @@ env.read_env()
 
 SYSTEM_PROMPT = env.str("SYSTEM_PROMPT", "You are a helpful assistant who provides informative answers about healthy living.")
 MODEL = env.str("MODEL", "gpt-3.5-turbo")
-NUMBER_OF_MESSAGES_FOR_CONTEXT = env.int("NUMBER_OF_MESSAGES_FOR_CONTEXT", 4)
+NUMBER_OF_MESSAGES_FOR_CONTEXT = min(env.int("NUMBER_OF_MESSAGES_FOR_CONTEXT", 4), 10)
 CHATGPT_TIMEOUT = env.int("CHATGPT_TIMEOUT", 10)
 
 openai.api_key = env.str("OPENAI_API_KEY")
